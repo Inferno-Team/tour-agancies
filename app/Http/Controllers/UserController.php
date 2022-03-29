@@ -22,6 +22,7 @@ class UserController extends Controller
                 'token' => null,
                 'type' => null
             ], 200);
+            
         $user = User::where('email', $request->email)->first();
         if (!isset($user)) {
             return response()->json([

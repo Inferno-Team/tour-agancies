@@ -214,30 +214,17 @@ class AgancyController extends Controller
     }
     public function getTourSchedule(Request $request)
     {
-        $user = Auth::user();
-        if ($user->user_type == 'manager') {
-            $checkAgancy = Agancy::where('manager_id', $user->id)->first();
-            if (!isset($checkAgancy))
-                return response()->json([
-                    'code' => 300,
-                    'messge' => "you don't have an agancy"
-                ], 200);
-            $tour = TourDetails::where('tour_details.id', $request->id)->with(
-                'tourPlaceTime.timeStep',
-                'tourPlaceTime.place',
-                // 'times',
-                // 'places',
-                'city'
-            )->first();
-            return response()->json([
-                'code' => 200,
-                'messge' => "your tour's schedule",
-                'data' => $tour
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => "you don't have permission to get access to this route"
-            ], 403);
-        }
+        $tour = TourDetails::where('tour_details.id', $request->id)->with(
+            'tourPlaceTime.timeStep',
+            'tourPlaceTime.place',
+            // 'times',
+            // 'places',
+            'city'
+        )->first();
+        return response()->json([
+            'code' => 200,
+            'messge' => "tour's schedule",
+            'data' => $tour
+        ], 200);
     }
 }

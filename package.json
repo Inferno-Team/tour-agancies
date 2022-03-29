@@ -21,6 +21,18 @@
         "sass-loader": "^11.0.1",
         "vue": "^2.6.12",
         "vue-loader": "^15.9.8",
-        "vue-template-compiler": "^2.6.12"
+        "vue-template-compiler": "^2.6.12",
+        "vue-router": "^3.5.3",
+        "bootstrap-icons": "^1.7.1",
+        "bootstrap-rtl": "^3.3.4",
+        "bootstrap-vue": "^2.21.2",
+        "popper.js": "^1.16.1"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.1.1",
+        "@fortawesome/free-regular-svg-icons": "^6.1.1",
+        "@fortawesome/free-solid-svg-icons": "^6.1.1",
+        "@fortawesome/vue-fontawesome": "^2.0.6",
+        "v-animate-css": "0.0.5"
     }
 }

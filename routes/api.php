@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AgancyController;
+use App\Http\Controllers\Customer;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::post('signup', [UserController::class, 'signUp']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+//for vue [ web application ]
 Route::group(['middleware' => ['auth:sanctum']], function ($route) {
 
     // manager [post] control routes
@@ -31,9 +33,22 @@ Route::group(['middleware' => ['auth:sanctum']], function ($route) {
     $route->post('add_place2tour', [AgancyController::class, 'addPlace2Tour']);
 
     // manager [get] control routes
-    $route->get('get_agancy', [AgancyController::class, 'getAgancy']);
+    $route->get('get_my_agancy', [AgancyController::class, 'getAgancy']);
     $route->get('get_times', [AgancyController::class, 'getTimes']);
     $route->get('get_places', [AgancyController::class, 'getPlaces']);
     $route->get('get_my_agancy_tours', [AgancyController::class, 'getMyAgancyTours']);
+    $route->get('get_tour_schedule', [AgancyController::class, 'getTourSchedule']);
+});
+
+// for android
+Route::group(['middleware' => ['auth:sanctum']], function ($route) {
+
+    // customer [post] control routes
+    $route->post('request_adding2tour', [AgancyController::class, 'requestTour']);
+
+    // customer [get] control routes
+    $route->get('get_agancy', [Customer::class, 'getAgancy']);
+    $route->get('get_all_agancy', [Customer::class, 'getAllAgancy']);
+    $route->get('get_agancy_tours', [Customer::class, 'getAgancyTours']);
     $route->get('get_tour_schedule', [AgancyController::class, 'getTourSchedule']);
 });
