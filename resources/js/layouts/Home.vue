@@ -8,13 +8,12 @@
       />
       <p>Log out</p>
     </div>
-    <img src="/images/background.jpeg" />
+    <img src="/storage/images/background.jpeg" />
     <operation-card
       :title="operationObject.title"
-      :field1_title="operationObject.field1_title"
-      :field2_title="operationObject.field2_title"
-      :field3_title="operationObject.field3_title"
+      :fields="fields"
       :state="operationObject.state"
+      @data="onOperationButtonClicked"
     />
     <div class="container">
       <home-card
@@ -28,20 +27,42 @@
         @clicked="clicked"
       />
     </div>
+    <notification :notification="notify" />
   </div>
 </template>
 <script>
 import HomeCard from "../components/HomeCard.vue";
 import OperationCard from "../components/OperationCard.vue";
+import Notification from "../components/Notification.vue";
 export default {
   mounted() {
     const token = localStorage.getItem("tour-agancy-token");
+
     if (token === undefined || token === null)
       this.$router.push({ name: "login" });
   },
-  components: { HomeCard, OperationCard },
+  components: { HomeCard, OperationCard, Notification },
   data() {
     return {
+      notify: {
+        msg: "",
+        code: -1,
+      },
+      fields: [
+        {
+          title: "Agancy Name",
+          type: "text",
+        },
+        {
+          title: "Location",
+          type: "text",
+        },
+        {
+          title: "City Id",
+          type: "number",
+        },
+      ],
+      initState: "",
       colors: [
         "rgba(249, 5, 123, 1)",
         "rgba(211, 8, 31, 1)",
@@ -81,47 +102,190 @@ export default {
     };
   },
   methods: {
-    getOtherState(state) {
-      return this.operationObject.state === "hidden" ? "visible" : "hidden";
+    getOpObject(path, oldState) {
+      if (path === 1) {
+        this.fields = [
+          {
+            title: "Agancy Name",
+            type: "text",
+          },
+          {
+            title: "Location",
+            type: "text",
+          },
+          {
+            title: "City Id",
+            type: "number",
+          },
+        ];
+        return {
+          path: path,
+          title: "Add New Agency",
+          field1_title: "Agancy Name",
+          field2_title: "Location",
+          field3_title: "City",
+          state: oldState,
+        };
+      }
+      if (path === 2) {
+        this.fields = [
+          {
+            title: "Name",
+            type: "text",
+          },
+          {
+            title: "Location",
+            type: "text",
+          },
+          {
+            title: "Location's Coordinate",
+            type: "text",
+          },
+        ];
+        return {
+          path: path,
+          title: "Add New Place",
+          field1_title: "Name",
+          field2_title: "Location",
+          field3_title: "Location's Coordinate",
+          state: oldState,
+        };
+      }
+      if (path === 3) {
+        this.fields = [
+          {
+            title: "Cost",
+            type: "number",
+          },
+          {
+            title: "Seat Count",
+            type: "number",
+          },
+          {
+            title: "City Id",
+            type: "number",
+          },
+          {
+            title: "start At",
+            type: "date",
+          },
+          {
+            title: "End At",
+            type: "date",
+          },
+        ];
+        return {
+          path: path,
+          title: "Add New Place",
+          field1_title: "Name",
+          field2_title: "Location",
+          field3_title: "Lat",
+          state: oldState,
+        };
+      }
+      return {};
+    },
+    addNewAgancy(data) {
+      axios
+        .post("/api/add_agancy", {
+          name: data.field1,
+          location: data.field2,
+          city_id: data.field3,
+        })
+        .then((response) => {
+          console.log(response);
+          this.notify = {
+            code: response.data.code,
+            msg: response.data.message,
+          };
+        })
+        .catch((err) => {
+          console.log(err);
+          this.notify = {
+            code: 400,
+            msg: "Error On Add new Agancy",
+          };
+        });
+    },
+    addNewPlace(data) {
+      //36.19556314029162, 37.13155181168135
+      //36.20280070250926, 37.15626196220924
+
+      let cords = data.field3.split(",");
+
+      let sendObject = {
+        name: data.field1,
+        address: data.field2,
+        lat: cords[0],
+        lng: cords[1].trim(),
+      };
+
+      axios
+        .post("/api/add_place", sendObject)
+        .then((response) => {
+          console.log(response);
+          this.notify = {
+            code: response.data.code,
+            msg: response.data.message,
+          };
+        })
+        .catch((err) => {
+          console.log(err);
+          this.notify = {
+            code: err.status,
+            msg: "Error On Add New Place.",
+          };
+        });
+    },
+    addNewTour(data) {
+      let sendObject = {
+        cost: data[0],
+        seat_count: data[1],
+        city_id: data[2],
+        start_at: data[3],
+        end_at: data[4],
+      };
+      axios
+        .post("/api/create_tour", sendObject)
+        .then((response) => {
+          this.notify = {
+            code: response.data.code,
+            msg: response.data.message,
+          };
+        })
+        .catch((err) => {
+          this.notify = {
+            code: err.status,
+            msg: "Error",
+          };
+        });
+    },
+    onOperationButtonClicked(data) {
+      console.log(this.initState);
+      if (this.initState == 1) this.addNewAgancy(data);
+      else if (this.initState == 2) this.addNewPlace(data);
+      else if (this.initState == 3) this.addNewTour(data);
     },
     clicked(path) {
-      if (this.operationObject.state === "hidden")
+      if (path == 5) this.$router.push({ name: "tours" });
+      if (this.initState === "") {
+        this.initState = path;
+        this.operationObject = this.getOpObject(path);
+        this.operationObject.state = "hidden";
+      } else if (
+        this.initState === path &&
+        this.operationObject.state === "hidden"
+      ) {
         this.operationObject.state = "visible";
-      else this.operationObject.state = "hidden";
-      switch (path) {
-        case 1:
-          {
-            this.operationObject = {
-              path: path,
-              title: "Add New Agency",
-              field1_title: "Agancy Name",
-              field2_title: "Location",
-              field3_title: "City",
-              state:
-                path === this.operationObject.path || path === -1
-                  ? getOtherState(this.operationObject.state)
-                  : getOtherState(this.operationObject.state),
-            };
-          }
-          break;
-        case 2:
-          {
-            this.operationObject = {
-              title: "Add New Place",
-              field1_title: "Name",
-              field2_title: "Location",
-              field3_title: "Lat",
-              state:
-                path === this.operationObject.path || path === -1
-                  ? getOtherState(this.operationObject.state)
-                  : getOtherState(this.operationObject.state),
-              path: path,
-            };
-          }
-          break;
-
-        default:
-          break;
+      } else if (
+        this.initState === path &&
+        this.operationObject.state === "visible"
+      ) {
+        this.operationObject.state = "hidden";
+      } else if (this.initState !== path) {
+        this.operationObject = this.getOpObject(path);
+        this.operationObject.state = "hidden";
+        this.initState = path;
       }
     },
     logout() {

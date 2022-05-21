@@ -9,7 +9,7 @@ import VAnimateCss from 'v-animate-css';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 
-import { faHatWizard,faPowerOff,faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import { faHatWizard, faPowerOff, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -25,8 +25,9 @@ const router = new VueRouter({
     mode: 'history',
     routes
 });
+
 const app = new Vue({
-    el: '#app',
+    el: '#application',
     components: { App },
     router
-}); 
+});

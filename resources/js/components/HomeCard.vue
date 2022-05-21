@@ -1,6 +1,6 @@
 <template>
   <div class="card" :style="cssProps">
-    <h3>{{ title }}</h3>
+    <h3>{{title}}</h3>
     <span></span>
     <span></span>
     <span></span>
@@ -62,14 +62,14 @@ export default {
   transition: 0.5s;
 }
 
-.card:hover .content {
+.card:hover  .content {
   transform: translateY(0);
   opacity: 1;
 }
 
 .card h3 {
   font-size: 1.2em;
-  color: rgb(255, 255, 255);
+  color: white;
   /* margin-bottom: 20px; */
   margin-top: 20px;
   text-align: center;
@@ -79,6 +79,7 @@ export default {
   font-size: 0.8em;
   color: rgba(18, 185, 197, 0.863);
   font-weight: 300;
+  white-space: pre-line;
 }
 
 .card .content a {

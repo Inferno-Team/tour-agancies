@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <div id="app" style="direction: rtl;margin:0;padding:0">
+    <div id="application" style="direction: rtl;margin:0;padding:0">
         <app></app>
     </div>
     <script src="{{ mix('js/app.js') }}">  </script>

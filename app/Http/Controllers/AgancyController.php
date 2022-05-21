@@ -29,9 +29,20 @@ class AgancyController extends Controller
                 'location' => $request->location,
                 'city_id' => $request->city_id,
                 'manager_id' => $user->id,
+                'img_url' => ''
             ]);
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $ext = $image->getClientOriginalExtension();
+                $name = time() . ".$ext";
+                $path = '/public/images/logos';
+                $image->storeAs($path, $name);
+                $agancy->img_url = "/storage/images/logos/$name";
+                $agancy->save();
+            }
             return response()->json([
                 'message' => "Agancy created successfully",
+                'code' => 200,
                 'agancy' => $agancy
             ], 200);
         } else {
@@ -49,8 +60,19 @@ class AgancyController extends Controller
                 'name' => $request->name,
                 'address' => $request->address,
                 'lat' => $request->lat,
-                'lng' => $request->lng
+                'lng' => $request->lng,
+                'disc' => $request->disc,
+                'img_url' => '',
             ]);
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $ext = $image->getClientOriginalExtension();
+                $name = time() . ".$ext";
+                $path = '/public/images/places';
+                $image->storeAs($path, $name);
+                $place->img_url = "/storage/images/places/$name";
+                $place->save();
+            }
             return response()->json([
                 'code' => 200,
                 'message' => 'created successfully',
@@ -58,8 +80,9 @@ class AgancyController extends Controller
             ], 200);
         } else {
             return response()->json([
-                'message' => "you don't have permission to get access to this route"
-            ], 403);
+                'message' => "you don't have permission to get access to this route",
+                'code' => 403,
+            ], 200);
         }
     }
     public function addTime(Request $request)
@@ -85,15 +108,17 @@ class AgancyController extends Controller
     public function createTour(Request $request)
     {
         $user = Auth::user();
-        $startDate = date('Y-m-d H:i:s', $request->start_at / 1000);
-        $endDate = date('Y-m-d H:i:s', $request->end_at / 1000);
+        // $startDate = date('Y-m-d H:i:s', $request->start_at / 1000);
+        // $endDate = date('Y-m-d H:i:s', $request->end_at / 1000);
+        $startDate = $request->start_at;
+        $endDate = $request->end_at;
 
         if ($user->user_type == 'manager') {
             $checkAgancy = Agancy::where('manager_id', $user->id)->first();
             if (!isset($checkAgancy))
                 return response()->json([
                     'code' => 300,
-                    'messge' => "you don't have an agancy yet."
+                    'message' => "you don't have an agancy yet."
                 ], 200);
 
             $tour = TourDetails::create([
@@ -101,7 +126,6 @@ class AgancyController extends Controller
                 'city_id' => $request->city_id,
                 'cost' => $request->cost,
                 'seat_count' => $request->seat_count,
-                'type' => $request->type,
                 'start_at' => $startDate,
                 'end_at' => $endDate,
             ]);
@@ -217,14 +241,21 @@ class AgancyController extends Controller
         $tour = TourDetails::where('tour_details.id', $request->id)->with(
             'tourPlaceTime.timeStep',
             'tourPlaceTime.place',
+            'agancy',
             // 'times',
             // 'places',
             'city'
         )->first();
         return response()->json([
             'code' => 200,
-            'messge' => "tour's schedule",
+            'message' => "tour's schedule",
             'data' => $tour
         ], 200);
+    }
+
+    public function getPlaceById($id)
+    {
+        $place = Place::find($id);
+        return response()->json($place);
     }
 }

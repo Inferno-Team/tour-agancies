@@ -33,6 +33,9 @@
         "@fortawesome/free-regular-svg-icons": "^6.1.1",
         "@fortawesome/free-solid-svg-icons": "^6.1.1",
         "@fortawesome/vue-fontawesome": "^2.0.6",
-        "v-animate-css": "0.0.5"
+        "jw-vue-pagination": "^1.0.3",
+        "v-animate-css": "0.0.5",
+        "vue-timeline": "^0.1.0",
+        "vue-timeline-component": "^0.1.6"
     }
 }

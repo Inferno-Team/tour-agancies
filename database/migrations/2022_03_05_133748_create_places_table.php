@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('address');
             $table->double('lat');
             $table->double('lng');
+            $table->string('disc')->nullable();
+            $table->string('img_url')->nullable();
             $table->timestamps();
         });
     }

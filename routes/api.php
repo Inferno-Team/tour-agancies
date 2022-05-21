@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => ['auth:sanctum']], function ($route) {
 
     // manager [post] control routes
-    $route->post('add_agancy', [AgancyController::class, 'createAgancy']);
+    $route->post('/add_agancy', [AgancyController::class, 'createAgancy']);
     $route->post('add_place', [AgancyController::class, 'addPlace']);
     $route->post('add_time', [AgancyController::class, 'addTime']);
     $route->post('create_tour', [AgancyController::class, 'createTour']);
@@ -50,5 +50,7 @@ Route::group(['middleware' => ['auth:sanctum']], function ($route) {
     $route->get('get_agancy', [Customer::class, 'getAgancy']);
     $route->get('get_all_agancy', [Customer::class, 'getAllAgancy']);
     $route->get('get_agancy_tours', [Customer::class, 'getAgancyTours']);
+    $route->get('get_tours',[Customer::class,'getToures']);
     $route->get('get_tour_schedule', [AgancyController::class, 'getTourSchedule']);
+    $route->get('get_place_by_id/{id}', [AgancyController::class, 'getPlaceById']);
 });

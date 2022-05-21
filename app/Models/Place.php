@@ -13,5 +13,7 @@ class Place extends Model
         'address',
         'lat',
         'lng',
+        'disc',
+        'img_url',
     ];
 }

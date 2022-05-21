@@ -11,6 +11,7 @@ class Agancy extends Model
     protected $fillable = [
         'name',
         'location',
+        'img_url',
         'city_id',
         'manager_id',
     ];

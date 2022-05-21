@@ -22,7 +22,7 @@ class UserController extends Controller
                 'token' => null,
                 'type' => null
             ], 200);
-            
+
         $user = User::where('email', $request->email)->first();
         if (!isset($user)) {
             return response()->json([
@@ -32,7 +32,7 @@ class UserController extends Controller
                 'type' => null
             ], 200);
         }
-        
+
         if (!Hash::check($request->password, $user->password))
             return response()->json([
                 'code' => 302,
@@ -40,11 +40,11 @@ class UserController extends Controller
                 'token' => null,
                 'type' => null
             ], 200);
-            
+
         $token = $user->createToken('auth')->plainTextToken;
         return response()->json([
             'code' => 200,
-            'response' => 'logged in successfully',
+            'message' => 'logged in successfully',
             'token' => $token,
             'type' => $user->user_type
         ], 200);
@@ -60,11 +60,13 @@ class UserController extends Controller
             'user_type' => $request->user_type,
             'password' => Hash::make($request->password),
         ]);
+        $token = $user->createToken('auth')->plainTextToken;
         return response()->json([
             'code' => 200,
             'message' => "user created successfully",
             'type' => $user->user_type,
-            'user' => $user
+            'user' => $user,
+            'token' => $token
         ], 200);
     }
 }

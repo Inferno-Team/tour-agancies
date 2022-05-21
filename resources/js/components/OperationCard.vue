@@ -3,25 +3,28 @@
     <div class="box" id="login-form">
       <h2>{{ title }}</h2>
       <form>
-        <div class="inputBox">
-          <input type="text" id="patient_name" required value="" />
-          <label>{{ field1_title }}</label>
+        <div
+          class="inputBox"
+          v-for="(field, index) in this.fields"
+          :key="index"
+        >
+          <input
+            :type="field.type"
+            required
+            value=""
+            v-model="dataObject[index]"
+          />
+          <label>{{ field.title }}</label>
         </div>
-        <div class="inputBox">
-          <input type="text" required value="" />
+        <!-- <div class="inputBox">
+          <input type="text" required value="" v-model="dataObject.field2" />
           <label>{{ field2_title }}</label>
         </div>
         <div class="inputBox">
-          <input
-            type="password"
-            maxlength="18"
-            id="password"
-            required
-            value=""
-          />
+          <input type="text" required value="" v-model="dataObject.field3" />
           <label>{{ field3_title }}</label>
-        </div>
-        <input type="button" :value="title" />
+        </div> -->
+        <input type="button" :value="title" @click.prevent="onClick" />
       </form>
     </div>
   </div>
@@ -31,13 +34,25 @@ export default {
   mounted() {
     this.showAddPatient(this.$props.state);
   },
-  props: ["title", "field1_title", "field2_title", "field3_title", "state"],
+  props: ["title", "fields", "state"],
   watch: {
     state: function (nV, oL) {
       this.showAddPatient(nV);
     },
   },
+  data() {
+    return {
+      dataObject: [],
+    };
+  },
   methods: {
+    onClick() {
+      // console.log(this.dataObject);
+      this.$emit("data", this.dataObject);
+      // this.dataObject.field1 = "";
+      // this.dataObject.field2 = "";
+      // this.dataObject.field3 = "";
+    },
     showAddPatient(value) {
       var operation_card = document.getElementById("operation_card");
       const exit = "animate__flipOutX";
@@ -59,7 +74,7 @@ export default {
 .operation-card {
   position: absolute;
   width: 250px;
-  height: 370px;
+  height: 570px;
   top: 7%;
   z-index: 100;
   right: 5%;
@@ -135,6 +150,7 @@ export default {
   cursor: pointer;
   border-radius: 0.312rem;
   font-size: 1rem;
+  margin: 1rem;
 }
 
 .operation-card .box input[type="button"]:hover {

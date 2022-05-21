@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('city_id')->references('id')->on('cities');
             $table->foreignId('manager_id')->unique()->references('id')->on('users');
             $table->string('location');
+            $table->string('img_url')->nullable();
             $table->timestamps();
         });
     }

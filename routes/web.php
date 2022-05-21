@@ -5,4 +5,4 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/{any}', [SpaController::class,'index'])->where('any', '.*');
+Route::get('/{any}',fn ()=> view('spa'))->where('any', '.*');

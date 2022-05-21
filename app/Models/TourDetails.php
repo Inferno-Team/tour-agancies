@@ -12,7 +12,6 @@ class TourDetails extends Model
     protected $fillable = [
         'cost',
         'seat_count',
-        'type',
         'agancy_id',
         'city_id',
         'start_at',

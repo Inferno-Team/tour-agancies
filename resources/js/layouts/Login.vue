@@ -1,19 +1,46 @@
 <template>
-  <div class="">
+  <div class="" style="direction: ltr">
     <div class="imgBx">
-      <img src="/images/background.jpeg" />
-      <div class="box" id="login-form" v-animate-css.hover.once="animationObject">
-        <h2>Sign In</h2>
-        <form style="direction: ltr" @click.prevent>
+      <img src="/storage/images/background.jpeg" />
+      <div
+        class="box"
+        id="login-form"
+        v-animate-css.hover.once="animationObject"
+      >
+        <h2 v-if="!isSignUp">Sign In</h2>
+        <h2 v-if="isSignUp">Sign Up</h2>
+        <form @click.prevent>
+          <div class="inputBox" v-if="isSignUp">
+            <input v-model="user.first_name" type="text" required value="" />
+            <label>First Name</label>
+          </div>
+          <div class="inputBox" v-if="isSignUp">
+            <input v-model="user.last_name" type="text" required value="" />
+            <label>Last Name</label>
+          </div>
           <div class="inputBox">
             <input v-model="user.email" type="email" required value="" />
             <label>Email</label>
+          </div>
+          <div class="inputBox" v-if="isSignUp">
+            <input type="text" v-model="user.phone" required value="" />
+            <label>Phone Number</label>
           </div>
           <div class="inputBox">
             <input type="password" v-model="user.password" required value="" />
             <label>Password</label>
           </div>
-          <input type="button" @click="login" name="sign-in" value="Login" />
+
+          <input
+            type="button"
+            @click="login"
+            :value="isSignUp ? 'Sign Up' : 'Log In'"
+          />
+          <div class="sign-up" v-if="!isSignUp">
+            <p>don't have account yet ?</p>
+            <p @click.prevent="change2signUp">Sign Up</p>
+          </div>
+          <p v-if="isSignUp" @click.prevent="change2signUp">Return to Log in</p>
         </form>
       </div>
     </div>
@@ -28,9 +55,13 @@ export default {
   },
   data() {
     return {
+      isSignUp: false,
       user: {
         email: "",
         password: "",
+        phone: "",
+        last_name: "",
+        first_name: "",
       },
       animationObject: {
         classes: "swing",
@@ -41,23 +72,66 @@ export default {
     };
   },
   methods: {
-    login() {
-      axios
-        .post("/api/login", this.user)
-        .then((response) => {
-          if (response.code === 200 || response.data.code === 200) {
-            localStorage.setItem("tour-agancy-token", response.data.token);
-            this.$router.push({ name: "home" });
-          } else {
-            console.log(response.data);
-          }
-        })
-        .catch((error) => console.log(error));
+    change2signUp() {
+      this.isSignUp = !this.isSignUp;
     },
+    login() {
+      if (!this.isSignUp) {
+        axios
+          .post("/api/login", this.user)
+          .then((response) => {
+            if (response.code === 200 || response.data.code === 200) {
+              localStorage.setItem("tour-agancy-token", response.data.token);
+              this.$router.push({ name: "home" });
+            } else {
+              console.log(response.data);
+            }
+          })
+          .catch((error) => console.log(error));
+      } else {
+        axios
+          .post("/api/signup", {
+            name: this.user.first_name,
+            last_name: this.user.last_name,
+            email: this.user.email,
+            phone: this.user.phone,
+            password: this.user.password,
+            user_type: "manager",
+          })
+          .then((response) => {
+            if (response.code === 200 || response.data.code === 200) {
+              localStorage.setItem("tour-agancy-token", response.data.token);
+              this.$router.push({ name: "home" });
+            } else {
+              console.log(response.data);
+            }
+          })
+          .catch((error) => console.log(error));
+      }
+    },
+    signUp() {},
   },
 };
 </script>
 <style  scoped>
+.sign-up {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+p {
+  font-size: 0.8rem;
+  color: white;
+  cursor: pointer;
+}
+p:last-child {
+  font-size: 1rem;
+  text-align: end;
+}
+p:last-child:hover {
+  color: #03a9f4;
+}
 .imgBx img {
   position: absolute;
   top: 0;
@@ -79,7 +153,7 @@ export default {
   border-radius: 0.625rem;
 }
 .box h2 {
-  margin: 0 0 1.875rem;
+  margin: 0 0 1rem;
   padding: 0;
   color: #fff;
   text-align: center;
@@ -94,7 +168,7 @@ export default {
   font-size: 1rem;
   color: #fff;
   letter-spacing: 0.062rem;
-  margin-bottom: 1.875rem;
+  margin-bottom: 1rem;
   border: none;
   border-bottom: 0.065rem solid #fff;
   outline: none;

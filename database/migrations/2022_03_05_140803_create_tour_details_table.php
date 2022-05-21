@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('seat_count')->default(0);
             $table->date('start_at')->nullable();
             $table->date('end_at')->nullable();
-            $table->enum('type', ['event', 'tour']);
             $table->timestamps();
         });
     }
