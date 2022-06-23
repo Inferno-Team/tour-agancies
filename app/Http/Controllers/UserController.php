@@ -18,7 +18,7 @@ class UserController extends Controller
         if (!isset($valid))
             return response()->json([
                 'code' => 300,
-                'response' => 'not all required field is sended',
+                'msg' => 'not all required field is sended',
                 'token' => null,
                 'type' => null
             ], 200);
@@ -27,7 +27,7 @@ class UserController extends Controller
         if (!isset($user)) {
             return response()->json([
                 'code' => 301,
-                'response' => 'this user not found',
+                'msg' => 'this user not found',
                 'token' => null,
                 'type' => null
             ], 200);
@@ -36,7 +36,7 @@ class UserController extends Controller
         if (!Hash::check($request->password, $user->password))
             return response()->json([
                 'code' => 302,
-                'response' => 'the sended data does not match our data',
+                'msg' => 'the sended data does not match our data',
                 'token' => null,
                 'type' => null
             ], 200);
@@ -44,7 +44,7 @@ class UserController extends Controller
         $token = $user->createToken('auth')->plainTextToken;
         return response()->json([
             'code' => 200,
-            'message' => 'logged in successfully',
+            'msg' => 'logged in successfully',
             'token' => $token,
             'type' => $user->user_type
         ], 200);

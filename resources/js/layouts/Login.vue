@@ -100,8 +100,12 @@ export default {
           })
           .then((response) => {
             if (response.code === 200 || response.data.code === 200) {
-              localStorage.setItem("tour-agancy-token", response.data.token);
-              this.$router.push({ name: "home" });
+              if(response.type === "manager"){
+                localStorage.setItem("tour-agancy-token", response.data.token);
+                this.$router.push({ name: "home" });
+              }else{
+                alert("You are not a manager");
+              }
             } else {
               console.log(response.data);
             }

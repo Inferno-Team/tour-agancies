@@ -6,11 +6,9 @@ import { BootstrapVue } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VAnimateCss from 'v-animate-css';
-
 import { library } from '@fortawesome/fontawesome-svg-core'
-
 import { faHatWizard, faPowerOff, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-
+import "vue2-dropzone/dist/vue2Dropzone.min.css";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 window.Vue = require('vue').default;

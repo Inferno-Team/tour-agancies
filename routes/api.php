@@ -30,7 +30,9 @@ Route::group(['middleware' => ['auth:sanctum']], function ($route) {
     $route->post('add_place', [AgancyController::class, 'addPlace']);
     $route->post('add_time', [AgancyController::class, 'addTime']);
     $route->post('create_tour', [AgancyController::class, 'createTour']);
+    $route->post('add-tour-with-image', [AgancyController::class, 'addTourPlaceWithImage']);
     $route->post('add_place2tour', [AgancyController::class, 'addPlace2Tour']);
+    $route->get('get_agancy_tours_by_manager', [AgancyController::class, 'getAgancyTours']);
 
     // manager [get] control routes
     $route->get('get_my_agancy', [AgancyController::class, 'getAgancy']);
@@ -38,6 +40,8 @@ Route::group(['middleware' => ['auth:sanctum']], function ($route) {
     $route->get('get_places', [AgancyController::class, 'getPlaces']);
     $route->get('get_my_agancy_tours', [AgancyController::class, 'getMyAgancyTours']);
     $route->get('get_tour_schedule', [AgancyController::class, 'getTourSchedule']);
+    $route->get('get_all_cities', [AgancyController::class, 'getAllCities']);
+    $route->get('get_all_requests',[AgancyController::class, 'getAllRequests']);
 });
 
 // for android
@@ -53,4 +57,8 @@ Route::group(['middleware' => ['auth:sanctum']], function ($route) {
     $route->get('get_tours',[Customer::class,'getToures']);
     $route->get('get_tour_schedule', [AgancyController::class, 'getTourSchedule']);
     $route->get('get_place_by_id/{id}', [AgancyController::class, 'getPlaceById']);
+    $route->post("book_on_tour/{id}",[AgancyController::class,'bookOnTour']);
+    $route->post("cancel_tour",[AgancyController::class,'cancelTour']);
+    $route->post('get_tours_by_ids', [AgancyController::class, 'getToursByIds']);
+    $route->post('get_ids_approved', [AgancyController::class, 'getIdsApproved']);
 });

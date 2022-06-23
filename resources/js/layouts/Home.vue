@@ -15,6 +15,9 @@
       :state="operationObject.state"
       @data="onOperationButtonClicked"
     />
+    <add-new-agency :state="addAngecy.state" @clicked="addNewAgancy" />
+    <add-new-place :state="addPlace.state" @clicked="addNewPlace" />
+    <create-tour :state="createTour.state" @clicked="addNewTour" />
     <div class="container">
       <home-card
         v-for="(i, index) in 5"
@@ -33,15 +36,17 @@
 <script>
 import HomeCard from "../components/HomeCard.vue";
 import OperationCard from "../components/OperationCard.vue";
+import AddNewAgency from "../components/operations/AddNewAgency.vue";
 import Notification from "../components/Notification.vue";
+import AddNewPlace from "../components/operations/AddNewPlace.vue";
+import CreateTour from "../components/operations/CreateTour.vue";
 export default {
   mounted() {
     const token = localStorage.getItem("tour-agancy-token");
-
     if (token === undefined || token === null)
       this.$router.push({ name: "login" });
   },
-  components: { HomeCard, OperationCard, Notification },
+  components: { HomeCard, OperationCard, Notification, AddNewAgency, AddNewPlace,CreateTour },
   data() {
     return {
       notify: {
@@ -81,14 +86,14 @@ export default {
         "Add New Tour Agency",
         "Add New Place",
         "Create Tour",
-        "Get Tour Schedule",
+        "Add New TIme Step",
         "Get My Agency Tours",
       ],
       desc: [
         "create new tour agancy if you are not have one already",
         "add new place to the database with coordinates of the new location",
         "create new tour and determine the toue details",
-        "choose the Tour and show the schedule that had been determined before",
+        "add new time step for any tour",
         "if you are already created tours , you can get them here and show details about them",
       ],
       operationObject: {
@@ -97,6 +102,15 @@ export default {
         field1_title: "Agancy Name",
         field2_title: "Location",
         field3_title: "City",
+        state: true,
+      },
+      addAngecy: {
+        state: true,
+      },
+      addPlace: {
+        state: true,
+      },
+      createTour: {
         state: true,
       },
     };
@@ -183,15 +197,31 @@ export default {
           state: oldState,
         };
       }
+      if (path === 4) {
+        this.fields = [
+          {
+            title: "Start At",
+            type: "text",
+          },
+          {
+            title: "End At",
+            type: "text",
+          },
+        ];
+        return {
+          path: path,
+          title: "Add New Time Line",
+          field1_title: "Start At",
+          field2_title: "End At",
+          state: oldState,
+        };
+      }
       return {};
     },
     addNewAgancy(data) {
+      console.log(data);
       axios
-        .post("/api/add_agancy", {
-          name: data.field1,
-          location: data.field2,
-          city_id: data.field3,
-        })
+        .post("/api/add_agancy", data)
         .then((response) => {
           console.log(response);
           this.notify = {
@@ -211,13 +241,13 @@ export default {
       //36.19556314029162, 37.13155181168135
       //36.20280070250926, 37.15626196220924
 
-      let cords = data.field3.split(",");
+      // let cords = data.field3.split(",");
 
       let sendObject = {
-        name: data.field1,
-        address: data.field2,
-        lat: cords[0],
-        lng: cords[1].trim(),
+        name: data.name,
+        address: data.location,
+        lat: data.latitude,
+        lng: data.longitude,
       };
 
       axios
@@ -238,15 +268,9 @@ export default {
         });
     },
     addNewTour(data) {
-      let sendObject = {
-        cost: data[0],
-        seat_count: data[1],
-        city_id: data[2],
-        start_at: data[3],
-        end_at: data[4],
-      };
+    
       axios
-        .post("/api/create_tour", sendObject)
+        .post("/api/create_tour", data)
         .then((response) => {
           this.notify = {
             code: response.data.code,
@@ -262,12 +286,31 @@ export default {
     },
     onOperationButtonClicked(data) {
       console.log(this.initState);
-      if (this.initState == 1) this.addNewAgancy(data);
-      else if (this.initState == 2) this.addNewPlace(data);
+      // if (this.initState == 1) this.addNewAgancy(data);
+      if (this.initState == 2) this.addNewPlace(data);
       else if (this.initState == 3) this.addNewTour(data);
     },
     clicked(path) {
+      console.log(path);
       if (path == 5) this.$router.push({ name: "tours" });
+      if (path == 1) {
+        if (this.addAngecy.state === "hidden") {
+          this.addAngecy.state = "show";
+        } else this.addAngecy.state = "hidden";
+        return;
+      } else if (path == 2) {
+        if (this.addPlace.state === "hidden") {
+          this.addPlace.state = "show";
+        } else this.addPlace.state = "hidden";
+        return;
+      }else if (path == 3) {
+        if (this.createTour.state === "hidden") {
+          this.createTour.state = "show";
+        } else this.createTour.state = "hidden";
+        return;
+      }else if (path == 4) {
+        this.$router.push({ name: "requests" });
+      }
       if (this.initState === "") {
         this.initState = path;
         this.operationObject = this.getOpObject(path);

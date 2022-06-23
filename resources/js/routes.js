@@ -2,6 +2,7 @@ import Home from './layouts/Home.vue'
 import Login from './layouts/Login.vue'
 import TourLayout from './layouts/TourLayout.vue'
 import TourTimeLine from './layouts/TourTimeLine.vue'
+import UserRequestLayout from './layouts/UsersRequestLayout.vue'
 export const routes = [{
         path: '/',
         name: 'home',
@@ -23,5 +24,10 @@ export const routes = [{
         component: TourTimeLine,
         props: true,
     },
+    {
+        path: '/requests',
+        name: 'requests',
+        component: UserRequestLayout
+    }
 
 ];

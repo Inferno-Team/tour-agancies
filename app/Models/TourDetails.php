@@ -52,4 +52,17 @@ class TourDetails extends Model
             'id',
         );
     }
+    public function format()
+    {
+        return [
+            'id' => $this->id,
+            'cost' => $this->cost,
+            'seat_count' => $this->seat_count,
+            'start_at' => $this->start_at,
+            'end_at' => $this->end_at,
+            'created_at' => $this->created_at->diffForHumans(),
+            'city' => $this->city,
+            
+        ];
+    }
 }

@@ -30,6 +30,7 @@ export default {
     return {
       schedule: {},
       arrayOfDays: [],
+      days:{}
     };
   },
   methods: {
@@ -43,6 +44,7 @@ export default {
         .then((response) => {
           this.schedule = response.data.data;
           let data = this.reshapeData();
+          this.days = data;
           console.log(data);
           for (var key in data) {
             var value = data[key];

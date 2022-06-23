@@ -99,12 +99,10 @@ class Customer extends Controller
     }
 
 
-    public function getAgancyTours()
+    public function getAgancyTours(Request $request)
     {
         $user = Auth::user();
-
-
-        $checkAgancy = Agancy::where('manager_id', $user->id)->first();
+        $checkAgancy = Agancy::where('manager_id', $request->agency_id)->first();
         if (!isset($checkAgancy))
             return response()->json([
                 'code' => 300,
@@ -124,13 +122,15 @@ class Customer extends Controller
         $user = Auth::user();
         if ($user->user_type == 'user') {
             $tours  = TourDetails::with('city')->orderBy('created_at')->simplePaginate(15);
+           $items  = $tours->getCollection()->map->format();
+            $tours->setCollection($items);
             return response()->json([
                 'code' => 200,
                 'messge' => "agancy's tours",
                 'data' => $tours
             ], 200);
         } else {
-            sleep(3);
+            
             return response()->json([
                 'message' => "you don't have permission to get access to this route",
                 'code' => 403,

@@ -10,17 +10,20 @@
     </div>
     <img src="/storage/images/background.jpeg" />
     <div class="container">
-      <home-card
-        v-for="(tour, index) in pageOfItems"
-        :key="index"
-        :title="tour.city.name"
-        :desc="tour.desc"
-        :path="index"
-        :color="colors[index]"
-        :shadow="shadow_colors[index]"
-        @clicked="clicked"
-      />
-      <div class="card-footer pb-0 pt-3">
+      <div class="container-home-card">
+        <home-card
+          v-for="(tour, index) in pageOfItems"
+          :key="index"
+          :title="tour.city.name"
+          :desc="tour.desc"
+          :path="index"
+          :color="colors[index]"
+          :shadow="shadow_colors[index]"
+          @clicked="clicked"
+        />
+      </div>
+
+      <div class="card-footer pb-0 pt-3 ma-3">
         <jw-pagination
           :items="tours"
           :pageSize="5"
@@ -51,7 +54,7 @@ export default {
     },
     getTours() {
       axios
-        .get("/api/get_agancy_tours")
+        .get("/api/get_agancy_tours_by_manager")
         .then((response) => {
           this.tours = response.data.data;
           for (let index = 0; index < this.tours.length; index++) {
@@ -63,7 +66,7 @@ export default {
             } S.P\nAvailable : ${diff < 0 ? "Yes" : "No"}`;
             this.tours[index].desc = desc;
             this.tours[index].isAvailable = diff < 0;
-          } 
+          }
         })
         .catch((err) => console.log(err));
     },
@@ -123,6 +126,14 @@ img {
   z-index: -1;
 }
 .container {
+  display: flex;
+  justify-content: center;
+  width: 750px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.container-home-card {
   display: flex;
   justify-content: center;
   width: 750px;
