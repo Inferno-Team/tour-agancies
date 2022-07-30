@@ -11,7 +11,7 @@
     <img src="/storage/images/background.jpeg" />
     <div class="container">
       <div class="agency_name m-3 p-3">Agency Name : {{ agency.name }}</div>
-      <div class="requests-container">
+      <div class="requests-container" v-if="requests.length > 0">
         <user-request-item
           v-for="(request, index) in requests"
           :key="index"
@@ -20,18 +20,40 @@
         />
       </div>
     </div>
+    <b-modal id="request-modal" hide-footer>
+      <template #modal-title>Response To Request</template>
+      <div class="d-block text-center">
+        <h3>Do you want to resopnsed to this request ?</h3>
+      </div>
+      <b-row style="justify-content: space-evenly">
+        <b-button
+          style="max-width: fit-content"
+          class="m-3 px-4 py-2"
+          @click="responsedToRequest"
+          >Yes</b-button
+        ><b-button
+          style="max-width: fit-content"
+          class="m-3 px-4 py-2"
+          @click="responsedToRequestWithNo"
+          >No</b-button
+        >
+      </b-row>
+    </b-modal>
   </div>
 </template>
 <script>
 import UserRequestItem from "../components/UserRequestItem.vue";
+import AlertDialog from "../components/AlertDialog.vue";
 export default {
   components: {
     UserRequestItem,
+    AlertDialog,
   },
   mounted() {
     const token = localStorage.getItem("tour-agancy-token");
     if (token === undefined || token === null)
       this.$router.push({ name: "login" });
+
     this.loadAllRequests();
     this.loadMyAgency();
   },
@@ -39,6 +61,10 @@ export default {
     return {
       requests: [],
       agency: {},
+      selectedRequest: {},
+      alertDilog: {
+        state: "hidden",
+      },
     };
   },
   methods: {
@@ -65,7 +91,48 @@ export default {
         .catch((e) => console.log(e));
     },
     onRequestClicked(request) {
-      // show dialog with yes and no question
+      if (request.approved === "waiting") {
+        this.$bvModal.show("request-modal");
+        this.selectedRequest = request;
+      }
+    },
+    responsedToRequest() {
+      this.$bvModal.hide("request-modal");
+      axios
+        .post("/api/approve_request", {
+          id: this.selectedRequest.id,
+          approved: "yes",
+        })
+        .then((response) => {
+          this.requests.forEach((r) => {
+            if (r.id === this.selectedRequest.id) {
+              r.approved = response.data.response;
+            }
+          });
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    responsedToRequestWithNo() {
+      this.$bvModal.hide("request-modal");
+      axios
+        .post("/api/approve_request", {
+          id: this.selectedRequest.id,
+          approved: "no",
+        })
+        .then((response) => {
+          this.requests.forEach((r) => {
+            if (r.id === this.selectedRequest.id) {
+              r.approved = response.data.response;
+            }
+          });
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
@@ -80,7 +147,8 @@ export default {
 .requests-container {
   background: #cecaca54;
   border-radius: 0.75rem;
-  height: 100%;
+  overflow-y: auto;
+  height: 75vh;
 }
 .container {
   display: flex;

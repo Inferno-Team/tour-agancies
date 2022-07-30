@@ -46,7 +46,14 @@ export default {
     if (token === undefined || token === null)
       this.$router.push({ name: "login" });
   },
-  components: { HomeCard, OperationCard, Notification, AddNewAgency, AddNewPlace,CreateTour },
+  components: {
+    HomeCard,
+    OperationCard,
+    Notification,
+    AddNewAgency,
+    AddNewPlace,
+    CreateTour,
+  },
   data() {
     return {
       notify: {
@@ -86,14 +93,14 @@ export default {
         "Add New Tour Agency",
         "Add New Place",
         "Create Tour",
-        "Add New TIme Step",
+        "Show All Request",
         "Get My Agency Tours",
       ],
       desc: [
         "create new tour agancy if you are not have one already",
         "add new place to the database with coordinates of the new location",
         "create new tour and determine the toue details",
-        "add new time step for any tour",
+        "show all user request to add on tour",
         "if you are already created tours , you can get them here and show details about them",
       ],
       operationObject: {
@@ -220,6 +227,7 @@ export default {
     },
     addNewAgancy(data) {
       console.log(data);
+
       axios
         .post("/api/add_agancy", data)
         .then((response) => {
@@ -268,7 +276,6 @@ export default {
         });
     },
     addNewTour(data) {
-    
       axios
         .post("/api/create_tour", data)
         .then((response) => {
@@ -294,21 +301,30 @@ export default {
       console.log(path);
       if (path == 5) this.$router.push({ name: "tours" });
       if (path == 1) {
+        this.addPlace.state = "show";
+        this.createTour.state = "show";
+
         if (this.addAngecy.state === "hidden") {
           this.addAngecy.state = "show";
         } else this.addAngecy.state = "hidden";
         return;
       } else if (path == 2) {
+        this.addAngecy.state = "show";
+        this.createTour.state = "show";
+
         if (this.addPlace.state === "hidden") {
           this.addPlace.state = "show";
         } else this.addPlace.state = "hidden";
         return;
-      }else if (path == 3) {
+      } else if (path == 3) {
+        this.addPlace.state = "show";
+        this.addAngecy.state = "show";
+
         if (this.createTour.state === "hidden") {
           this.createTour.state = "show";
         } else this.createTour.state = "hidden";
         return;
-      }else if (path == 4) {
+      } else if (path == 4) {
         this.$router.push({ name: "requests" });
       }
       if (this.initState === "") {
@@ -354,6 +370,7 @@ img {
   width: 750px;
   flex-wrap: wrap;
 }
+
 .powerOff {
   z-index: 0;
   position: absolute;

@@ -113,6 +113,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .dropzone {
   height: 20px;

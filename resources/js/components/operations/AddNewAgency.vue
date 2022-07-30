@@ -15,20 +15,33 @@
           <label>Agency Location</label>
         </div>
         <b-dropdown id="dropdown-1" text="Choose a city" class="m-md-2">
-          <b-dropdown-item v-for="(city, index) in cities" :key="index">{{
-            city.name
-          }}</b-dropdown-item>
+          <b-dropdown-item
+            @click="agency.city_id = city.id"
+            v-for="(city, index) in cities"
+            :key="index"
+            >{{ city.name }}</b-dropdown-item
+          >
         </b-dropdown>
+        <vue-dropzone
+          ref="logo"
+          id="dropzone"
+          :options="dropzoneOptions"
+        ></vue-dropzone>
         <input type="button" value="Add New Agnecy" @click.prevent="onClick" />
       </form>
     </div>
   </div>
 </template>
 <script>
+import vue2Dropzone from "vue2-dropzone";
+
 export default {
   mounted() {
     this.showAddAgency(this.$props.state);
     this.getAllCities();
+  },
+  components: {
+    vueDropzone: vue2Dropzone,
   },
   props: ["state"],
   watch: {
@@ -40,10 +53,25 @@ export default {
     return {
       agency: {},
       cities: [],
+      dropzoneOptions: {
+        url: "/api/add-tour-with-image",
+        uploadMultiple: false,
+        paramName: "agency_logo",
+        autoProcessQueue: false,
+        addRemoveLinks: true,
+        thumbnailWidth: 100,
+        thumbnailHeight: 100,
+        maxFiles: 1,
+        thumbnailMethod: "contain",
+      },
     };
   },
   methods: {
     onClick() {
+      var logoObject = this.$refs.logo.getQueuedFiles();
+      if (logoObject != null) {
+        this.agency.logo = logoObject[0].dataURL;
+      }
       this.$emit("clicked", this.agency);
     },
     showAddAgency(value) {
@@ -77,7 +105,7 @@ export default {
 .operation-card-add-agency {
   position: absolute;
   width: 250px;
-  height: 440px;
+  height: 500px;
   top: 7%;
   z-index: 100;
   right: 5%;
@@ -160,5 +188,10 @@ export default {
 
 .box input[type="button"]:hover {
   background-color: #e91e63;
+}
+.dropzone {
+  width: 85% !important;
+  height: 33% !important;
+  margin: auto !important;
 }
 </style>

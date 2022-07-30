@@ -1,27 +1,46 @@
 <template>
-  <div class="time-line-container">
-    <div class="logout-div">
-      <font-awesome-icon
-        icon="fa-solid fa-power-off"
-        class="powerOff"
-        @click.prevent="logout"
-      />
-      <p>Log out</p>
+  <div>
+    <div class="time-line-container">
+      <div class="logout-div">
+        <font-awesome-icon
+          icon="fa-solid fa-power-off"
+          class="powerOff"
+          @click.prevent="logout"
+        />
+        <p>Log out</p>
+      </div>
+      <img src="/storage/images/background.jpeg" />
+
+      <div v-for="(points, index) in arrayOfDays" :key="index">
+        <div v-if="points != undefined && points != null" class="day-name">
+          Day #{{ points.day }}
+        </div>
+        <TimeLine
+          v-if="points != undefined && points != null"
+          :points="points.p"
+        ></TimeLine>
+      </div>
+      <div class="floating-container">
+        <div class="floating-button" @click.prevent="showAddForm">+</div>
+      </div>
     </div>
-    <img src="/storage/images/background.jpeg" />
-    <div v-for="(points, index) in arrayOfDays" :key="index">
-      <div class="day-name">Day #{{ index + 1 }}</div>
-      <TimeLine :points="points"></TimeLine>
-    </div>
+    <add-time-line
+      @onAdd="onTimeLineAdded"
+      :id="this.$props.id"
+      :days="days"
+      :state="showAddFormValue"
+    ></add-time-line>
   </div>
 </template>
 
 <script>
 import TimeLine from "vue-timeline/src/components/timeLine.vue";
+import AddTimeLine from "../components/operations/AddTimeLine.vue";
 export default {
   props: ["id"],
   components: {
     TimeLine,
+    AddTimeLine,
   },
   mounted() {
     this.getTourSchedule();
@@ -29,8 +48,9 @@ export default {
   data() {
     return {
       schedule: {},
-      arrayOfDays: [],
-      days:{}
+      arrayOfDays: {},
+      days: [],
+      showAddFormValue: "show",
     };
   },
   methods: {
@@ -60,7 +80,7 @@ export default {
                 linkText: "Open Image",
               });
             }
-            this.arrayOfDays.push(points);
+            this.arrayOfDays[key] = { p: points, day: key };
           }
         })
         .catch((error) => console.log(error));
@@ -85,6 +105,14 @@ export default {
         }
       }
       return days;
+    },
+    showAddForm() {
+      if (this.showAddFormValue === "show") this.showAddFormValue = "hidden";
+      else this.showAddFormValue = "show";
+    },
+    onTimeLineAdded(newTimeline) {
+      this.arrayOfDays = [];
+      this.getTourSchedule();
     },
   },
 };
@@ -143,8 +171,8 @@ img {
   background: rgba(255, 255, 255, 0.334) !important;
 }
 .timeline-content::before {
-  border-right: 7px solid rgba(255, 255, 255, 0.334) ;
-  border-left: 7px solid rgba(255, 255, 255, 0.334) ;
+  border-right: 7px solid rgba(255, 255, 255, 0.334);
+  border-left: 7px solid rgba(255, 255, 255, 0.334);
 }
 
 .timeline-content h2,
@@ -153,5 +181,45 @@ img {
 }
 .date {
   color: white;
+}
+.floating-container {
+  position: fixed;
+  width: 100px;
+  height: 100px;
+  bottom: 0;
+  right: 0;
+  margin: 25px 15px;
+  z-index: 1;
+}
+
+.floating-container:hover {
+  height: 300px;
+}
+
+.floating-container:hover .floating-button {
+  box-shadow: 0 10px 25px #e91e62c0;
+  transform: translatey(5px);
+  transition: all 0.3s;
+}
+
+.floating-container .floating-button {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: #e91e63;
+  bottom: 0;
+  border-radius: 50%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  color: white;
+  line-height: 60px;
+  text-align: center;
+  font-size: 19px;
+  z-index: 100;
+  box-shadow: 0 10px 25px -5px #e91e62c0;
+  cursor: pointer;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
 }
 </style>

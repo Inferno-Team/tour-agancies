@@ -102,7 +102,7 @@ class Customer extends Controller
     public function getAgancyTours(Request $request)
     {
         $user = Auth::user();
-        $checkAgancy = Agancy::where('manager_id', $request->agency_id)->first();
+        $checkAgancy = Agancy::where('id', $request->agency_id)->first();
         if (!isset($checkAgancy))
             return response()->json([
                 'code' => 300,
@@ -130,7 +130,6 @@ class Customer extends Controller
                 'data' => $tours
             ], 200);
         } else {
-            
             return response()->json([
                 'message' => "you don't have permission to get access to this route",
                 'code' => 403,

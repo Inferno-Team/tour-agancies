@@ -3,6 +3,7 @@
 use App\Http\Controllers\AgancyController;
 use App\Http\Controllers\Customer;
 use App\Http\Controllers\UserController;
+use App\Models\Agancy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +33,8 @@ Route::group(['middleware' => ['auth:sanctum']], function ($route) {
     $route->post('create_tour', [AgancyController::class, 'createTour']);
     $route->post('add-tour-with-image', [AgancyController::class, 'addTourPlaceWithImage']);
     $route->post('add_place2tour', [AgancyController::class, 'addPlace2Tour']);
-    $route->get('get_agancy_tours_by_manager', [AgancyController::class, 'getAgancyTours']);
-
+    $route->post('/approve_request',[AgancyController::class,'approveRequest']);
+    
     // manager [get] control routes
     $route->get('get_my_agancy', [AgancyController::class, 'getAgancy']);
     $route->get('get_times', [AgancyController::class, 'getTimes']);
@@ -42,6 +43,9 @@ Route::group(['middleware' => ['auth:sanctum']], function ($route) {
     $route->get('get_tour_schedule', [AgancyController::class, 'getTourSchedule']);
     $route->get('get_all_cities', [AgancyController::class, 'getAllCities']);
     $route->get('get_all_requests',[AgancyController::class, 'getAllRequests']);
+    $route->get('get_all_places',[AgancyController::class, 'getAllPlaces']);
+    $route->get('get_all_times',[AgancyController::class, 'getAllTimes']);
+    $route->get('get_agancy_tours_by_manager', [AgancyController::class, 'getAgancyTours']);
 });
 
 // for android

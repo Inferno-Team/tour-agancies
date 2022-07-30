@@ -14,13 +14,34 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Ui\Presets\React;
 
 class AgancyController extends Controller
 {
+
+    protected function convertBase64ToFile(String $base64)
+    {
+        $image_64 = $base64; //your base64 encoded data
+
+        $extension = explode(
+            '/',
+            explode(':', substr($image_64, 0, strpos($image_64, ';')))[1]
+        )[1];   // .jpg .png .pdf
+
+        $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
+
+        // find substring fro replace here eg: data:image/png;base64,
+
+        $image = str_replace($replace, '', $image_64);
+
+        $image = str_replace(' ', '+', $image);
+        return [base64_decode($image), $extension];
+    }
     public function createAgancy(Request $request)
     {
         $user = Auth::user();
+        info($request);
         if ($user->user_type == 'manager') {
             $checkAgancy = Agancy::where('manager_id', $user->id)->first();
             if (isset($checkAgancy))
@@ -35,13 +56,13 @@ class AgancyController extends Controller
                 'manager_id' => $user->id,
                 'img_url' => ''
             ]);
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $ext = $image->getClientOriginalExtension();
-                $name = time() . ".$ext";
-                $path = '/public/images/logos';
-                $image->storeAs($path, $name);
-                $agancy->img_url = "/storage/images/logos/$name";
+            info($request->all());
+            if (isset($request->logo)) {
+                $image = $this->convertBase64ToFile($request->logo);
+                $timeNow = time() ;
+                $imageName = '/images/logos/' . $timeNow . '.' . $image[1];
+                Storage::disk('public')->put($imageName, $image[0]);
+                $agancy->img_url = "storage$imageName";
                 $agancy->save();
             }
             return response()->json([
@@ -445,5 +466,31 @@ class AgancyController extends Controller
                 'data' => $requests
             ], 200);
         }
+    }
+    public function approveRequest(Request $request)
+    {
+        $r = TourUser::where('id', $request->id)->first();
+        $r->approved = $request->approved;
+        $r->save();
+        return response()->json([
+            'response' => $r->approved,
+            'code' => 200
+        ], 200);
+    }
+    public function getAllPlaces()
+    {
+        $places = Place::all();
+        return response()->json([
+            'places' => $places,
+            'code' => 200
+        ], 200);
+    }
+    public function getAllTimes()
+    {
+        $times = TimeStep::all();
+        return response()->json([
+            'times' => $times,
+            'code' => 200
+        ], 200);
     }
 }

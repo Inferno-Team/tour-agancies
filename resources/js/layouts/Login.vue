@@ -80,11 +80,15 @@ export default {
         axios
           .post("/api/login", this.user)
           .then((response) => {
-            if (response.code === 200 || response.data.code === 200) {
+            if (response.data.code == 200) {
               localStorage.setItem("tour-agancy-token", response.data.token);
+              axios.defaults.headers.common[
+                "Authorization"
+              ] = `Bearer ${response.data.token}`;
               this.$router.push({ name: "home" });
             } else {
               console.log(response.data);
+              alert(response.data.msg)
             }
           })
           .catch((error) => console.log(error));
@@ -99,11 +103,14 @@ export default {
             user_type: "manager",
           })
           .then((response) => {
-            if (response.code === 200 || response.data.code === 200) {
-              if(response.type === "manager"){
+            if (response.data.code === 200) {
+              if (response.data.type === "manager") {
                 localStorage.setItem("tour-agancy-token", response.data.token);
+                axios.defaults.headers.common[
+                  "Authorization"
+                ] = `Bearer ${response.data.token}`;
                 this.$router.push({ name: "home" });
-              }else{
+              } else {
                 alert("You are not a manager");
               }
             } else {
