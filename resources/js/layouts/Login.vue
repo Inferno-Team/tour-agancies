@@ -1,7 +1,7 @@
 <template>
   <div class="" style="direction: ltr">
     <div class="imgBx">
-      <img src="/storage/images/background.jpeg" />
+      <img src="/storage/images/background.jpg" />
       <div
         class="box"
         id="login-form"

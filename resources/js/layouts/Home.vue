@@ -8,7 +8,7 @@
       />
       <p>Log out</p>
     </div>
-    <img src="/storage/images/background.jpeg" />
+    <img src="/storage/images/background.jpg" />
     <operation-card
       :title="operationObject.title"
       :fields="fields"
